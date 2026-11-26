@@ -1,28 +1,23 @@
-"""
-# Entry validated: output is 1-200 chars, one line, deterministic.
-Entry point that writes a specific suspense line to the output directory.
-"""
-
 import os
+import sys
 
-LINE = "My husband whispered I looked so peaceful asleep, which froze my blood, because I was staring at the ceiling, and his warm breath came from the empty pillow inches from my ear."
+"""
+# Round 2 entry validated: output is 1-200 chars, one line, deterministic.
+One Line, One Chill entry.
+Writes a single frightening sentence to $MAKEFUN_OUTPUT_DIR/entry.txt (default /output).
+"""
 
-def main():
+LINE = "The cardiologist's waiting room magazine falls open to my obituary — birthmark clinically noted, widow thanking the doctor who 'caught it early' — an appointment I haven't scheduled."
+
+def main() -> int:
     content = LINE + "\n"
-    
-    # Validate content
-    if not (1 <= len(content) <= 200 and content.strip()):
-        raise ValueError("Content validation failed")
-    if content.count("\n") != 1 or content.endswith("\n\n"):
-        raise ValueError("Must contain exactly one line")
-        
+    if not (1 <= len(content) <= 200 and content.strip() and content.count('\n') == 1):
+        raise ValueError("content validation failed")
     out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
     os.makedirs(out_dir, exist_ok=True)
-    
-    primary_path = os.path.join(out_dir, "entry.txt")
-    with open(primary_path, "w", encoding="utf-8") as f:
+    out_path = os.path.join(out_dir, "entry.txt")
+    with open(out_path, "w", encoding="utf-8") as f:
         f.write(content)
-        
     if out_dir != "/output":
         try:
             os.makedirs("/output", exist_ok=True)
@@ -30,9 +25,8 @@ def main():
                 f.write(content)
         except Exception:
             pass
-            
-    print(primary_path)
-    print(len(content))
+    print(f"{out_path} {len(content)}")
+    return 0
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
